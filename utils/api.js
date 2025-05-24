@@ -46,3 +46,39 @@ export const bookAppointment = async (formData) => {
 
   return res.json();
 };
+
+// utils/api.js
+export const getArticles = async () => {
+  const res = await fetch(`${API_URL}/articles?populate=*`);
+  const json = await res.json();
+
+  // ✅ DEBUG: Check the structure of your response
+  console.log("🔍 Raw Strapi response:", JSON.stringify(json, null, 2));
+
+  const data = json.data;
+
+  if (!Array.isArray(data)) {
+    console.error("❌ Unexpected data format from Strapi:", data);
+    return [];
+  }
+
+  // ✅ If your API response is flattened (not nested in attributes)
+  return data.map((item) => {
+    console.log("📦 Article item:", item); // Log each article
+
+    return {
+      id: item.id,
+      title: item.title || item.attributes?.title || 'Untitled',
+      content: item.content || item.attributes?.content || '',
+      slug: item.slug || item.attributes?.slug || '',
+      coverImage:
+        item.coverImage?.url ||
+        item.attributes?.coverImage?.data?.attributes?.url ||
+        null,
+    };
+  });
+};
+
+
+
+

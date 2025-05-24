@@ -6,6 +6,7 @@ export async function POST(request) {
     if (!formData.data?.name ||
         !formData.data?.email ||
         !formData.data?.phonenumber ||
+        !formData.data?.dob ||
         !formData.data?.date ||
         !formData.data?.doctor ||
         !formData.data?.department) {

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -21,20 +22,19 @@ export default function AppointmentsPage() {
     try {
       const res = await fetch('/api/getAppointments');
       const data = await res.json();
-      console.log("Fetched appointments:", data);
-
-      const appointmentsData = data.data.map((appt) => ({
-        id: appt.id, // ✅ this is 99 — real ID
-        documentId: appt.documentId, // ✅ optional for display
+      const formatted = data.data.map((appt) => ({
+        id: appt.id,
+        documentId: appt.documentId,
         name: appt.name || 'N/A',
         email: appt.email || 'N/A',
+        phonenumber: appt.phonenumber || 'N/A',
+        dob: appt.dob || 'N/A',
         date: appt.date || 'N/A',
         state: appt.state || 'Pending',
         doctorName: appt.doctor || 'N/A',
         departmentName: appt.department || 'N/A',
       }));
-   
-      setAppointments(appointmentsData);
+      setAppointments(formatted);
     } catch (err) {
       console.error('Error fetching appointments:', err);
     } finally {
@@ -43,95 +43,138 @@ export default function AppointmentsPage() {
   };
 
   const updateAppointmentStatus = async (id, newState) => {
+    let cancellationReason = null;
+
+    if (newState.toLowerCase() === 'cancelled') {
+      cancellationReason = prompt('Please enter a reason for cancelling this appointment:');
+      if (!cancellationReason || cancellationReason.trim() === '') {
+        alert('Cancellation reason is required.');
+        return;
+      }
+    }
+
     try {
       const res = await fetch('/api/update-appointment-status', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, state: newState }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          state: newState,
+          ...(cancellationReason && { cancellationReason }),
+        }),
       });
-  
+
       const result = await res.json();
       if (res.ok) {
-        console.log("Update successful:", result.message);
-        fetchAppointments(); // Refresh the list after update
+        alert(`Appointment successfully ${newState.toLowerCase()}.`);
+        fetchAppointments();
       } else {
-        console.error("Error updating:", result.message);
-        alert(result.message || 'Something went wrong.');
+        alert(result.message || 'An error occurred while updating the appointment.');
       }
     } catch (err) {
       console.error('Update error:', err);
-      alert('Something went wrong.');
+      alert('An unexpected error occurred.');
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminLoggedIn');
-    router.push('/admin/login');
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-700 text-lg">
-        Loading appointments...
-      </div>
-    );
-  }
+  const filteredAppointments = appointments.filter((appt) => {
+    if (filter === 'all') return true;
+    return appt.state.toLowerCase() === filter.toLowerCase();
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">📅 Booked Appointments</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Logout
-          </button>
+    <div className="min-h-screen bg-gray-100 px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Appointment Management</h1>
+        {/* Filter */}
+        <div className="mb-8">
+          <p className="text-base font-medium text-gray-700 mb-2">Filter by status:</p>
+          <div className="flex gap-3 flex-wrap">
+            {['all', 'pending', 'confirmed', 'cancelled'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilter(status)}
+                className={`px-4 py-2 rounded-full text-sm font-medium capitalize ${
+                  filter === status
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* No appointments */}
-        {appointments.length === 0 ? (
-          <p className="text-gray-600 text-center">No appointments yet.</p>
+        {/* Appointments */}
+        {loading ? (
+          <div className="text-center text-gray-600 py-20">Loading appointments...</div>
+        ) : filteredAppointments.length === 0 ? (
+          <p className="text-gray-600 text-center mt-20">No appointments found.</p>
         ) : (
-          <ul className="grid gap-4">
-            {appointments.map((appt) => (
-              <li
+          <div className="space-y-4">
+            {filteredAppointments.map((appt) => (
+              <div
                 key={appt.id}
-                className="bg-white rounded-lg shadow p-4 border border-gray-200"
+                className="flex justify-between items-center bg-white rounded-lg shadow p-5 border border-gray-200"
               >
-                <h2 className="text-lg font-semibold text-blue-700">{appt.name}</h2>
-                <p className="text-gray-700">{appt.email}</p>
-                <p className="text-sm text-gray-500">Date: {appt.date}</p>
-                <div className="mt-2 text-sm text-gray-600">
-                  <p>Doctor: <span className="font-medium">{appt.doctorName}</span></p>
-                  <p>Department: <span className="font-medium">{appt.departmentName}</span></p>
-                  <p>Status: <span className="font-medium">{appt.state}</span></p>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-800">{appt.name}</h2>
+                  <p className="text-sm text-gray-600">{appt.email}</p>
+                  <p className="text-sm text-gray-600">📞 {appt.phonenumber}</p>
+                  <p className="text-sm text-gray-600">🎂 {appt.dob}</p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    🗓 <strong>{appt.date}</strong>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    👨‍⚕️ <strong>{appt.doctorName}</strong> | 🏥 {appt.departmentName}
+                  </p>
+                  <p className="text-sm mt-1">
+                    Status:{' '}
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        appt.state === 'Pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : appt.state === 'Confirmed'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {appt.state}
+                    </span>
+                  </p>
                 </div>
 
-                {/* Buttons only if Pending */}
-                {appt.state.toLowerCase() === 'pending' && (
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={() => updateAppointmentStatus(appt.id, 'Confirmed')}
-                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                    >
-                      Confirm
-                    </button>
+                {/* Actions */}
+                <div className="flex flex-col items-end gap-2">
+                  {appt.state.toLowerCase() === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => updateAppointmentStatus(appt.id, 'Confirmed')}
+                        className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => updateAppointmentStatus(appt.id, 'Cancelled')}
+                        className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+                  {appt.state.toLowerCase() === 'confirmed' && (
                     <button
                       onClick={() => updateAppointmentStatus(appt.id, 'Cancelled')}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      className="bg-red-400 text-white px-4 py-1 rounded hover:bg-red-500"
                     >
                       Cancel
                     </button>
-                  </div>
-                )}
-              </li>
+                  )}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>

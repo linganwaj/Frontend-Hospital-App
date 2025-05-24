@@ -1,12 +1,15 @@
-import Link from "next/link";
-import DoctorCard from '../components/doctorCard';
-import Navigation from '../components/navigation';  // Import your navigation component
 
+import Navigation from "../components/navigation";  
+import AnimatedDoctorList from "../components/AnimatedDoctorList";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+
+// ✨ Fetch doctors
 async function getDoctorsByDepartment(departmentName) {
   if (!departmentName) return [];
 
   try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/doctors?filters[department][$eq]=${encodeURIComponent(departmentName)}&populate=department`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/doctors?filters[department][name][$eq]=${encodeURIComponent(departmentName)}&populate=department`;
     
     const res = await fetch(apiUrl, {
       headers: { 
@@ -14,7 +17,7 @@ async function getDoctorsByDepartment(departmentName) {
       },
       cache: 'no-store',
     });
-    
+
     if (!res.ok) throw new Error(`API Error: ${res.status}`);
     
     const data = await res.json();
@@ -25,48 +28,32 @@ async function getDoctorsByDepartment(departmentName) {
   }
 }
 
-export default async function DoctorsPage({ searchParams }) {
+// ✨ Main Page Component
+export default async function DoctorsPage({ searchParams = {} }) {
   const department = searchParams?.department || '';
   const doctors = await getDoctorsByDepartment(department);
 
-  console.log("Doctors data:", doctors);
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Navigation />  {/* Render your navigation here */}
-      <main>
-      <h1 className="text-3xl font-bold mb-4">
-         {doctors[0]?.attributes?.department?.data?.attributes?.name 
-         ? `Doctors in ${doctors[0].attributes.department.data.attributes.name}`
-         : department 
-         ? `Doctors in ${department}`
-         : 'All Doctors'}
-      </h1>
-                {doctors.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {doctors.map(doctor => (
-            <DoctorCard 
-              key={doctor?.id}
-              id={doctor?.id}
-              name={doctor?.attributes?.name || doctor?.name}
-              department={doctor?.attributes?.department?.data?.attributes?.name || department}
-              availability={doctor?.attributes?.availability || doctor?.availability}
-            />
-          ))}
-          </div>
-        ) : (
-          <p className="text-lg text-gray-600">
-            {department ? `No doctors found in ${department}.` : "Please select a department."}
-          </p>
-        )}
-       <div className="text-center mt-12 mb-8">
-        <Link href="/departments">
-          <button className="w-3/4 md:w-1/2 bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-2xl font-medium transition duration-300 shadow-lg text-xl">
-            Back to Departments
-          </button>
+    <>
+      {/* Navigation Bar */}
+      <Navigation />
+
+      {/* Soft Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-white opacity-60 -z-10" />
+
+      {/* 🔙 Back to Departments */}
+      <div className="max-w-7xl mx-auto px-4 mt-24">
+        <Link
+          href="/departments"
+          className="inline-flex items-center text-emerald-700 hover:text-emerald-800 font-medium text-md mb-6 transition"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Departments
         </Link>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      {/* Animated Doctors List */}
+      <AnimatedDoctorList doctors={doctors} department={department} />
+    </>
   );
 }

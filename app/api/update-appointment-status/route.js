@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
-    const { id, state } = await req.json();
+    const { id, state, cancellationReason } = await req.json();
 
     const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
     const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
@@ -13,7 +13,7 @@ export async function POST(req) {
 
     console.log('Trying to update appointment with id:', id);
 
-    // ✅ First fetch using filters
+    // ✅ Step 1: Find internal Strapi ID
     const findRes = await fetch(`${STRAPI_URL}/api/appointments?filters[id][$eq]=${id}`, {
       headers: {
         Authorization: `Bearer ${STRAPI_TOKEN}`,
@@ -28,21 +28,27 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Appointment not found.' }, { status: 404 });
     }
 
-    const realAppointmentId = findData.data[0].id; // 🧠 Strapi internal id!
+    const realAppointmentId = findData.data[0].id;
 
-    // ✅ Now update the appointment with correct ID
+    // ✅ Step 2: Prepare body to send
+    const updatePayload = {
+      id: realAppointmentId,
+      state,
+    };
+
+    if (state.toLowerCase() === 'cancelled' && cancellationReason) {
+      updatePayload.cancellationReason = cancellationReason;
+    }
+
+    // ✅ Step 3: Send update to Strapi custom controller
     const updateRes = await fetch(`${STRAPI_URL}/api/appointments/update-status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${STRAPI_TOKEN}`,
       },
-      body: JSON.stringify({
-        id: realAppointmentId, // the one you found
-        state: state,
-      }),
+      body: JSON.stringify(updatePayload),
     });
-    
 
     const updateData = await updateRes.json();
 

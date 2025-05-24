@@ -10,7 +10,7 @@ const DoctorsSchedule = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <div className="bg-green-500 bg-opacity-50 py-20 pt-32">
+      <div className="bg-green-500 py-20 pt-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl md:text-6xl">
