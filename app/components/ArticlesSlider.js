@@ -25,7 +25,7 @@ const ArticlesSlider = () => {
   }
 
   return (
-    <div className="[&_.swiper-pagination]:mt-4 [&_.swiper-pagination]:relative">
+    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 [&_.swiper-pagination]:mt-4 [&_.swiper-pagination]:relative">
       <Swiper
         modules={[Navigation, Pagination]}
         spaceBetween={10}
@@ -45,22 +45,22 @@ const ArticlesSlider = () => {
           if (!coverImage || !slug) return null;
 
           return (
-            <SwiperSlide key={id} className="flex justify-center px-1">
-              <Link href={`/articles/${slug}`} className="w-full max-w-sm">
+            <SwiperSlide key={id} className="flex justify-center px-2 sm:px-3">
+              <Link href={`/articles/${slug}`} className="w-full max-w-[90vw] sm:max-w-sm">
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden transition transform hover:scale-105 hover:shadow-md">
                   
-                  {/* Shorter image area */}
+                  {/* Image area */}
                   <div className="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
                     <img
                       src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${coverImage}`}
                       alt={`Cover image for ${title}`}
-                      className="w-full h-full object-contain transition duration-300"
+                      className="w-full h-full object-cover transition duration-300"
                     />
                   </div>
 
-                  {/* Title - tighter padding and 1-line truncate */}
-                  <div className="p-3">
-                    <h3 className="text-sm sm:text-base font-semibold text-gray-800 text-center truncate">
+                  {/* Title */}
+                  <div className="p-2 sm:p-3">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-800 text-center line-clamp-2 sm:truncate">
                       {title ?? 'Untitled'}
                     </h3>
                   </div>

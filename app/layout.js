@@ -19,7 +19,7 @@ export const metadata = {
   title: "Legacy Clinics App",
   description: "Book appointments and manage healthcare at Legacy Clinics",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
 };
 

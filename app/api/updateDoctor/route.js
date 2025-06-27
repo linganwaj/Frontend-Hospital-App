@@ -11,16 +11,17 @@ export async function PUT(req) {
     const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
     const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
-    const updateRes = await fetch(`${STRAPI_URL}/api/doctors/update-availability`, {
+    const updateRes = await fetch(`${STRAPI_URL}/api/doctors/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${STRAPI_TOKEN}`,
       },
-      body: JSON.stringify({ id, data }),
+      body: JSON.stringify({ data }),
     });
 
     const result = await updateRes.json();
+    console.log(result);
 
     if (!updateRes.ok) {
       console.error('❌ Failed to update doctor:', result);

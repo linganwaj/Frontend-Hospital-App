@@ -30,9 +30,10 @@ export default function ConfirmationPage() {
                 </h1>
 
                 <p className="mt-3 text-lg text-gray-700 max-w-xl">
-                    Thank you for booking with Legacy Clinics. We look forward to welcoming you. 
-                    A confirmation has been sent to your email.
+                Thank you for booking with Legacy Clinics. We look forward to welcoming you.  
+                An email will be sent to notify you once your appointment is confirmed or declined.
                 </p>
+
 
                 <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
                     {/* Back to Home */}

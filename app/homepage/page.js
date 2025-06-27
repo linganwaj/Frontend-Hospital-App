@@ -80,30 +80,6 @@ const page = () => {
         </div>
       </div>
 
-      {/* Articles Slider Section */}
-      <div className="bg-green-600 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-extrabold text-white">Latest Articles</h2>
-            <p className="text-base text-green-100 mt-1">
-              Stay informed with the latest updates, schedules, and events at Legacy Clinics.
-            </p>
-          </div>
-
-          <div className="[&_.swiper-pagination]:mt-4 [&_.swiper-pagination]:relative">
-            <ArticlesSlider />
-          </div>
-
-          <div className="text-center mt-6">
-            <Link href="/articles">
-              <Button className="bg-white text-green-700 hover:bg-green-100 px-6 py-2 rounded-md font-medium transition">
-                View All Articles
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       {/* CTA Section */}
       <div className="bg-[#0077B8] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

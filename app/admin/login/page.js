@@ -17,10 +17,6 @@ export default function AdminLoginPage() {
     const PASS = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'password123';
     setAdminCreds({ username: USER, password: PASS });
 
-    // Redirect if already logged in
-    if (localStorage.getItem('adminLoggedIn')) {
-      router.replace('/admin/appointments');
-    }
   }, [router]);
 
   const handleLogin = (e) => {

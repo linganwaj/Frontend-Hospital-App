@@ -1,4 +1,3 @@
-
 import Navigation from "../components/navigation";  
 import AnimatedDoctorList from "../components/AnimatedDoctorList";
 import { ArrowLeft } from "lucide-react";
@@ -34,26 +33,23 @@ export default async function DoctorsPage({ searchParams = {} }) {
   const doctors = await getDoctorsByDepartment(department);
 
   return (
-    <>
-      {/* Navigation Bar */}
-      <Navigation />
+  <div className="w-full">
+  <Navigation />
+  <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-white opacity-60 -z-10" />
+  
+  {/* 🔙 Back to Departments */}
+  <div className="max-w-7xl mx-auto px-4 mt-24">
+    <Link
+      href="/departments"
+      className="inline-flex items-center text-emerald-700 hover:text-emerald-800 font-medium text-md mb-6 transition"
+    >
+      <ArrowLeft className="w-5 h-5 mr-2" />
+      Back to Departments
+    </Link>
+  </div>
 
-      {/* Soft Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-white opacity-60 -z-10" />
-
-      {/* 🔙 Back to Departments */}
-      <div className="max-w-7xl mx-auto px-4 mt-24">
-        <Link
-          href="/departments"
-          className="inline-flex items-center text-emerald-700 hover:text-emerald-800 font-medium text-md mb-6 transition"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Departments
-        </Link>
-      </div>
-
-      {/* Animated Doctors List */}
-      <AnimatedDoctorList doctors={doctors} department={department} />
-    </>
+  {/* Doctor Cards Section */}
+  <AnimatedDoctorList doctors={doctors} department={department} />
+</div>
   );
 }

@@ -167,7 +167,7 @@ const DoctorsSchedule = () => {
               Schedule your visit with our specialists today.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/booking">
+              <Link href="/book-appointment">
                 <Button
                   variant="outline"
                   size="sm"
