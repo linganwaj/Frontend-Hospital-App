@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="mb-4 flex justify-center">
           <Image
-            src="/Big Size.png"
+            src="/big-size.png"
             alt="Logo"
             width={64}
             height={64}

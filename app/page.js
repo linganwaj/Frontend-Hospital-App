@@ -29,12 +29,15 @@ export default function Home() {
           className="mb-6"
         >
           <Image
-            src="/Big Size.png"
+            src="/big-size.png"
             alt="Hospital Logo"
             width={200}
             height={200}
-            className="logo"
+            unoptimized
+            priority
           />
+
+
         </motion.div>
 
         {/* Welcome Heading */}
