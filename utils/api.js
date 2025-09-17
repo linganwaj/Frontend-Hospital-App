@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api';
+const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://62.171.162.188:1337/api';
 
 // ✅ Fetch ALL departments (both draft + published)
 export const getDepartments = async () => {

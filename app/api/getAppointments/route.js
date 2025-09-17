@@ -1,5 +1,5 @@
 // app/api/getAppointments/route.js
-const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337/api';
+const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://62.171.162.188:1337/api';
 const API_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
 export async function GET() {

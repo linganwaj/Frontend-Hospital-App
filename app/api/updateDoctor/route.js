@@ -8,7 +8,7 @@ export async function PUT(req) {
       return NextResponse.json({ error: 'Missing id or data' }, { status: 400 });
     }
 
-    const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+    const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://62.171.162.188:1337';
     const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
     const updateRes = await fetch(`${STRAPI_URL}/api/doctors/${id}`, {

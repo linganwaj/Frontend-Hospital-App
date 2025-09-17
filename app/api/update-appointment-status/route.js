@@ -4,7 +4,7 @@ export async function POST(req) {
   try {
     const { id, state, cancellationReason } = await req.json();
 
-    const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+    const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://62.171.162.188:1337';
     const STRAPI_TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN;
 
     if (!id || !state) {
