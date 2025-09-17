@@ -2,9 +2,9 @@ const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://62.171.162.188
 
 // ✅ Fetch ALL departments (both draft + published)
 export const getDepartments = async () => {
-  const res = await fetch(`${API_URL}/departments?publicationState=preview`);
+  const res = await fetch(`${API_URL}/departments?populate=*&publicationState=preview`);
   const data = await res.json();
-  return data.data; // Strapi returns { data: [...] }
+  return data.data || [];
 };
 
 // ✅ Fetch doctors filtered by department ID (both draft + published)

@@ -21,7 +21,7 @@ async function getDepartments() {
     if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
 
     const response = await res.json();
-    return response.data;
+    return response.data || [];
   } catch (error) {
     console.error("Fetch Error:", error);
     return [];
