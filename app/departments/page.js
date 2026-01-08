@@ -4,29 +4,7 @@ import Navigation from "../components/navigation";
 import DepartmentCard from "../components/departmentCard";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-// ✨ Fetch departments
-async function getDepartments() {
-  try {
-    const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/departments?populate=*`;
-    console.log("Fetching from:", apiUrl);
-
-    const res = await fetch(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`,
-      },
-      cache: "no-store",
-    });
-
-    if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
-
-    const response = await res.json();
-    return response.data || [];
-  } catch (error) {
-    console.error("Fetch Error:", error);
-    return [];
-  }
-}
+import { getDepartments } from "../../utils/api";
 
 // ✨ Page Component
 export default function DepartmentsPage() {
@@ -35,9 +13,14 @@ export default function DepartmentsPage() {
 
   useEffect(() => {
     async function fetchDepartments() {
-      const data = await getDepartments();
-      setDepartments(data);
-      setLoading(false);
+      try {
+        const data = await getDepartments();
+        setDepartments(data);
+      } catch (error) {
+        console.error("Failed to fetch departments", error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchDepartments();
   }, []);
@@ -50,7 +33,7 @@ export default function DepartmentsPage() {
       <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-white opacity-60 -z-10" />
 
       <main className="container mx-auto px-4 py-8 mt-12">
-      <h1 className="text-4xl font-bold text-emerald-700 mb-8">Our Healthcare Departments</h1>
+        <h1 className="text-4xl font-bold text-emerald-700 mb-8">Our Healthcare Departments</h1>
 
 
         {/* Loading State */}
